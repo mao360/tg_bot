@@ -7,6 +7,8 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 )
 
+// add comment
+
 // Состояния пользователей для отслеживания выбранного режима
 var userStates = make(map[int64]string)
 
