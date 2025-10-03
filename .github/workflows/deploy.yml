@@ -75,9 +75,7 @@ jobs:
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           
           # Запускаем новый контейнер
-          docker run -d \
-            --name tg-bot \
-            --restart unless-stopped \
+          docker run -d --name tg-bot --restart unless-stopped \
             -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
             -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
