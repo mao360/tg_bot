@@ -80,17 +80,11 @@ jobs:
           
           # Тестируем запуск контейнера (не в фоне)
           echo "=== Testing container startup ==="
-          timeout 10s docker run --rm --name tg-bot-test \
-            -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
-            -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || echo "Container test completed"
+          timeout 10s docker run --rm --name tg-bot-test -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || echo "Container test completed"
           
           # Запускаем новый контейнер в фоне
           echo "=== Starting production container ==="
-          docker run -d --name tg-bot --restart unless-stopped \
-            -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
-            -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} \
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker run -d --name tg-bot --restart unless-stopped -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           
           # Ждем немного и проверяем статус
           sleep 5
