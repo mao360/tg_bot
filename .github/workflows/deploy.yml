@@ -79,6 +79,7 @@ jobs:
             --name tg-bot \
             --restart unless-stopped \
             -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
+            -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           
           # Показываем статус
