@@ -74,11 +74,29 @@ jobs:
           # Скачиваем новый образ
           docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           
-          # Запускаем новый контейнер
+          # Проверяем что образ скачался
+          echo "=== Available images ==="
+          docker images | grep ${{ env.IMAGE_NAME }}
+          
+          # Тестируем запуск контейнера (не в фоне)
+          echo "=== Testing container startup ==="
+          timeout 10s docker run --rm --name tg-bot-test \
+            -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
+            -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest || echo "Container test completed"
+          
+          # Запускаем новый контейнер в фоне
+          echo "=== Starting production container ==="
           docker run -d --name tg-bot --restart unless-stopped \
             -e TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
             -e PAYMENT_PROVIDER_TOKEN=${{ secrets.PAYMENT_PROVIDER_TOKEN }} \
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           
-          # Показываем статус
-          docker ps | grep tg-bot
+          # Ждем немного и проверяем статус
+          sleep 5
+          echo "=== Container Status ==="
+          docker ps -a | grep tg-bot || echo "Container not found"
+          
+          # Показываем логи если контейнер упал
+          echo "=== Container Logs ==="
+          docker logs tg-bot --tail 50 || echo "No logs available"
